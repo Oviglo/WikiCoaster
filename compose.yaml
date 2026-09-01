@@ -1,0 +1,31 @@
+services:
+  php:
+    build: .
+    container_name: wcoaster-php
+    ports:
+      - 8000:80
+    volumes:
+      - ./app:/var/www/html/
+  db:
+    image: mysql:8.0
+    container_name: wcoaster-db
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: wikicoaster
+    volumes:
+      - mysqldata:/var/lib/mysql
+    ports:
+      - "3307:3306"
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: wcoaster-phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: password
+      PMA_PORT: 3306
+    ports:
+      - "8080:80"
+
+volumes:
+  mysqldata:

@@ -1,0 +1,39 @@
+{
+    "name": "iut-info/wikicoaster",
+    "type": "project",
+    "description": "Coaster reference application",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.4",
+        "symfony/flex": "^2.11",
+        "symfony/runtime": "8.2.*",
+        "symfony/console": "8.2.*",
+        "symfony/dotenv": "8.2.*",
+        "symfony/framework-bundle": "8.2.*",
+        "symfony/yaml": "8.2.*"
+    },
+    "config": {
+        "allow-plugins": {
+            "symfony/flex": true,
+            "symfony/runtime": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": true,
+            "require": "8.2.*"
+        }
+    },
+    "scripts": {
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        }
+    }
+}
