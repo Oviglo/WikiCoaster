@@ -16,7 +16,8 @@
         "symfony/apache-pack": "*",
         "doctrine/doctrine-bundle": "^3.3",
         "doctrine/doctrine-migrations-bundle": "^4.0",
-        "doctrine/orm": "^3.6"
+        "doctrine/orm": "^3.6",
+        "symfony/webpack-encore-bundle": "^2.4"
     },
     "config": {
         "allow-plugins": {
