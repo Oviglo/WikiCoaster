@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libzip-dev \
     libicu-dev \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # PHP extensions
@@ -19,8 +20,13 @@ RUN docker-php-ext-configure gd --with-jpeg \
     opcache \
     intl
 
-# Apache
-RUN a2enmod rewrite
+RUN pecl install apcu \
+    && docker-php-ext-enable apcu
+
+# Configuration d'apache pour Symfony
+COPY ./docker/apache.conf /etc/apache2/sites-available/000-default.conf
+RUN a2ensite 000-default.conf \
+    && a2enmod rewrite
 
 # Composer
 ENV COMPOSER_ALLOW_SUPERUSER=1

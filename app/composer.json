@@ -11,7 +11,12 @@
         "symfony/console": "8.2.*",
         "symfony/dotenv": "8.2.*",
         "symfony/framework-bundle": "8.2.*",
-        "symfony/yaml": "8.2.*"
+        "symfony/yaml": "8.2.*",
+        "symfony/ux-turbo": "^3.4",
+        "symfony/apache-pack": "*",
+        "doctrine/doctrine-bundle": "^3.3",
+        "doctrine/doctrine-migrations-bundle": "^4.0",
+        "doctrine/orm": "^3.6"
     },
     "config": {
         "allow-plugins": {
@@ -35,5 +40,10 @@
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         }
+    },
+    "require-dev": {
+        "symfony/stopwatch": "8.2.*",
+        "symfony/web-profiler-bundle": "8.2.*",
+        "symfony/maker-bundle": "*"
     }
 }
