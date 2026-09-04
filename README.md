@@ -1,6 +1,9 @@
 # Wiki Coaster
 Bienvenue dans votre projet de développement intégré INFO 2.
 
+## Cloner le projet Github
+
+
 ## Installation
 
 ### Via Docker
@@ -109,7 +112,87 @@ Symfony CLI sont alors installées et utilisées par votre système.
 Les commandes ci-dessous sont à exécuter dans un terminal, depuis le dossier
 principal du projet.
 
-#### 1. Installer PHP 8.4
+#### 1. Installer Git et récupérer le projet
+
+**Git** est un outil qui permet de télécharger et de suivre les versions d'un
+projet. **GitHub** est un service en ligne qui héberge des dépôts Git, comme
+celui de WikiCoaster.
+
+##### Windows
+
+Téléchargez et installez [Git for Windows](https://git-scm.com/download/win).
+Pendant l'installation, les options proposées par défaut conviennent. Ouvrez
+ensuite **Git Bash**, PowerShell ou l'invite de commandes.
+
+##### Linux (Ubuntu ou Debian)
+
+Installez Git avec le gestionnaire de paquets :
+
+```bash
+sudo apt update
+sudo apt install git
+```
+
+Vérifiez que Git est disponible :
+
+```bash
+git --version
+```
+
+##### Créer un compte GitHub
+
+Si vous n'avez pas encore de compte, rendez-vous sur
+[github.com](https://github.com/), cliquez sur **Sign up** et suivez les
+instructions. Une adresse e-mail est nécessaire pour créer le compte.
+
+Le compte GitHub est nécessaire pour participer au projet. Pour cloner un
+dépôt public comme celui-ci, il n'est pas nécessaire de configurer une clé SSH
+ou un mot de passe GitHub.
+
+##### Cloner le projet
+
+Placez-vous dans le dossier où vous souhaitez enregistrer le projet, puis
+exécutez :
+
+```bash
+git clone https://github.com/Oviglo/WikiCoaster.git
+cd WikiCoaster
+```
+
+La commande `git clone` télécharge le dépôt et crée un dossier `WikiCoaster`.
+La commande `cd WikiCoaster` entre dans ce dossier. Les commandes des étapes
+suivantes doivent être exécutées à cet endroit.
+
+##### Créer son propre dépôt GitHub
+
+Pour travailler sur votre propre copie du projet, créez un
+nouveau dépôt sur [github.com](https://github.com/) avec votre compte. Donnez-
+lui un nom, par exemple `WikiCoaster`, et laissez-le vide : ne créez pas de
+`README`, de fichier `.gitignore` ou de licence, car ces fichiers existent
+déjà dans le projet cloné.
+
+Dans le terminal, toujours placé dans le dossier `WikiCoaster`, remplacez
+`VOTRE_NOM` par votre nom d'utilisateur GitHub et exécutez :
+
+```bash
+git remote rename origin upstream
+git remote add origin https://github.com/VOTRE_NOM/WikiCoaster.git
+git remote -v
+git push -u origin main
+```
+
+La commande `remote rename` conserve le dépôt d'origine sous le nom
+`upstream`. La commande `remote add` définit votre nouveau dépôt comme dépôt
+principal, appelé `origin`. `remote -v` permet de vérifier les adresses
+enregistrées. Enfin, `push` envoie le code vers votre dépôt GitHub et
+`-u origin main` associe la branche locale `main` à la branche distante.
+
+Si Git indique que votre branche s'appelle `master` au lieu de `main`, utilisez
+`git push -u origin master`. GitHub peut demander une authentification lors du
+premier envoi.
+
+
+#### 2. Installer PHP 8.4
 
 PHP est le langage utilisé par Symfony. La version 8.4 doit être disponible
 dans le terminal avant de continuer.
@@ -161,7 +244,7 @@ php --version
 
 La première ligne doit commencer par `PHP 8.4`.
 
-#### 2. Installer Composer
+#### 3. Installer Composer
 
 Composer est le gestionnaire de dépendances PHP. Il lit le fichier
 `composer.json` et télécharge les bibliothèques nécessaires à Symfony.
@@ -191,7 +274,7 @@ Vérifiez l'installation :
 composer --version
 ```
 
-#### 3. Installer Node.js et NPM
+#### 4. Installer Node.js et NPM
 
 Node.js permet d'exécuter des outils JavaScript. **NPM** est installé avec
 Node.js et sert notamment à télécharger les dépendances front-end du projet.
@@ -219,7 +302,7 @@ npm install
 Cette étape crée généralement le dossier `node_modules`. Si aucun fichier
 `package.json` n'est présent, cette commande n'est pas nécessaire.
 
-#### 4. Installer Symfony CLI
+#### 5. Installer Symfony CLI
 
 Symfony CLI est un outil en ligne de commande qui fournit notamment un serveur
 de développement local. Il ne remplace pas Symfony : il aide à lancer et à
@@ -246,7 +329,7 @@ demande. Dans un nouveau terminal, vérifiez l'installation :
 symfony version
 ```
 
-#### 5. Installer et lancer le projet
+#### 6. Installer et lancer le projet
 
 Après l'installation des outils, exécutez Composer depuis le dossier du projet
 pour télécharger les dépendances PHP :
