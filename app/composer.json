@@ -7,11 +7,11 @@
     "require": {
         "php": ">=8.4",
         "symfony/flex": "^2.11",
-        "symfony/runtime": "8.2.*",
-        "symfony/console": "8.2.*",
-        "symfony/dotenv": "8.2.*",
-        "symfony/framework-bundle": "8.2.*",
-        "symfony/yaml": "8.2.*",
+        "symfony/runtime": "8.1.*",
+        "symfony/console": "8.1.*",
+        "symfony/dotenv": "8.1.*",
+        "symfony/framework-bundle": "8.1.*",
+        "symfony/yaml": "8.1.*",
         "symfony/ux-turbo": "^3.4",
         "symfony/apache-pack": "*",
         "doctrine/doctrine-bundle": "^3.3",
@@ -33,7 +33,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": true,
-            "require": "8.2.*"
+            "require": "8.1.*"
         }
     },
     "scripts": {
@@ -43,8 +43,8 @@
         }
     },
     "require-dev": {
-        "symfony/stopwatch": "8.2.*",
-        "symfony/web-profiler-bundle": "8.2.*",
+        "symfony/stopwatch": "8.1.*",
+        "symfony/web-profiler-bundle": "8.1.*",
         "symfony/maker-bundle": "*"
     }
 }
