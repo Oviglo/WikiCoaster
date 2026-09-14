@@ -9,7 +9,13 @@
         "babel-plugin-polyfill-corejs3": "^1.0.0",
         "core-js": "^3.49.0",
         "webpack": "^5.82",
-        "webpack-cli": "^7.0.0"
+        "webpack-cli": "^7.0.0",
+        "@symfony/stimulus-bridge": "^4.0.1",
+        "@tailwindcss/postcss": "^4.3.3",
+        "daisyui": "^5.7.37",
+        "postcss": "^8.5.28",
+        "postcss-loader": "^8.2.1",
+        "tailwindcss": "^4.3.3"
     },
     "license": "UNLICENSED",
     "private": true,
