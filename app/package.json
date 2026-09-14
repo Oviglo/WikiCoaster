@@ -8,6 +8,7 @@
         "@symfony/webpack-encore": "^7.0.0",
         "babel-plugin-polyfill-corejs3": "^1.0.0",
         "core-js": "^3.49.0",
+        "daisyui": "^5.7.37",
         "webpack": "^5.82",
         "webpack-cli": "^7.0.0"
     },
@@ -18,5 +19,12 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress"
+    },
+    "dependencies": {
+        "@symfony/stimulus-bridge": "^4.0.1",
+        "@tailwindcss/postcss": "^4.3.3",
+        "postcss": "^8.5.28",
+        "postcss-loader": "^8.2.1",
+        "tailwindcss": "^4.3.3"
     }
 }

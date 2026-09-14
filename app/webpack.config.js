@@ -76,6 +76,7 @@ Encore
 
     // uncomment if you're having problems with a jQuery plugin
     //.autoProvidejQuery()
+    .enablePostCssLoader()
 ;
 
 export default await Encore.getWebpackConfig();
