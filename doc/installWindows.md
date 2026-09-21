@@ -128,6 +128,21 @@ code .
 La commande `code .` ouvre le dossier courant dans VS Code avec la connexion
 WSL. Vérifiez que VS Code indique **WSL: Ubuntu** dans sa barre d'état.
 
+> [!NOTE]
+> Si Git affiche un message indiquant que le dépôt n'est pas sûr (*dubious
+> ownership*) lorsque vous ouvrez le projet depuis Windows, ajoutez le dossier
+> WSL aux dossiers approuvés dans votre fichier Git `~/.gitconfig` sous
+> Windows. Ajoutez ou complétez cette section en adaptant `loic` avec votre nom
+> d'utilisateur Ubuntu :
+>
+> ```ini
+> [safe]
+>     directory = \\wsl$\Ubuntu\home\loic\WikiCoaster
+> ```
+>
+> Enregistrez le fichier puis relancez VS Code. Cette configuration indique à
+> Git que ce dépôt WSL est fiable.
+
 ### Corriger un problème de droits d'écriture
 
 Les commandes exécutées dans un conteneur Docker peuvent créer des fichiers
