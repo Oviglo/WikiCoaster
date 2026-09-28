@@ -17,7 +17,9 @@
         "doctrine/doctrine-bundle": "^3.3",
         "doctrine/doctrine-migrations-bundle": "^4.0",
         "doctrine/orm": "^3.6",
-        "symfony/webpack-encore-bundle": "^2.4"
+        "symfony/webpack-encore-bundle": "^2.4",
+        "symfony/form": "8.1.*",
+        "symfony/validator": "8.1.*"
     },
     "config": {
         "allow-plugins": {
