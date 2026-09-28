@@ -12,6 +12,8 @@
         "symfony/dotenv": "8.1.*",
         "symfony/framework-bundle": "8.1.*",
         "symfony/yaml": "8.1.*",
+        "symfony/form": "8.1.*",
+        "symfony/validator": "8.1.*",
         "symfony/ux-turbo": "^3.4",
         "symfony/apache-pack": "*",
         "doctrine/doctrine-bundle": "^3.3",
