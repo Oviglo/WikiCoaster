@@ -1,0 +1,34 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+<div class="flex justify-end my-4">
+    <a class="btn btn-neutral" href="{{ path('app_coaster_add') }}">Nouveau coaster</a>
+</div>
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Vit. Max.</th>
+                <th>Long.</th>
+                <th>Haut. Max.</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {%  for coaster in coasters %}
+            <tr>
+                <td><strong>{{ coaster.name }}</strong></td>
+                <td>{{ coaster.maxSpeed }}</td>
+                <td>{{ coaster.length }}</td>
+                <td>{{ coaster.maxHeight }}</td>
+                <td>{{ coaster.operating ? 'OK': 'KO' }}</td>
+                <td></td>
+            </tr>
+            {%  endfor %}
+        </tbody>
+    </table>
+</div>
+{%  endblock %}
