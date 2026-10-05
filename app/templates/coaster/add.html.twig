@@ -1,4 +1,11 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
+
+{{ form_start(coasterForm) }}
+{{ form_widget(coasterForm) }}
+{# Bouton HTML submit #}
+<button type="submit" class="btn btn-primary">Enregistrer</button>
+{{ form_end(coasterForm) }}
+
 {% endblock %}
