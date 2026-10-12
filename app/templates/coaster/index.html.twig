@@ -25,7 +25,9 @@
                 <td>{{ coaster.length }}</td>
                 <td>{{ coaster.maxHeight }}</td>
                 <td>{{ coaster.operating ? 'OK':'KO' }}</td>
-                <td></td>
+                <td>
+                    <a href="{{ path('app_coaster_edit', {id: coaster.id}) }}" class="btn">Modifier</a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

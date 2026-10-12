@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class CoasterController extends AbstractController
 {
     #[Route('/coaster')]
+    // Injection de dépendance
     public function index(CoasterRepository $coasterRepository): Response
     {
         $coasters = $coasterRepository->findAll();
@@ -43,6 +44,29 @@ class CoasterController extends AbstractController
 
 
         return $this->render('coaster/add.html.twig', [
+            'coasterForm' => $form,
+        ]);
+    }
+
+    #[Route('coaster/{id}/edit')]
+    // Param converter, permet de convertir un paramètre en entité
+    public function edit(Coaster $entity, Request $request, EntityManagerInterface $em): Response
+    {
+        // On ne crée pas d'entité car elle est envoyée dans les paramètres
+        
+        $form = $this->createForm(CoasterType::class, $entity);
+        // Traitement des données $_POST 
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Pas besoin de "persist" car Doctrine connait déjà l'entité
+            $em->flush(); // Met à jour la DB
+
+            // redirection
+            return $this->redirectToRoute('app_coaster_index');
+        }
+
+        return $this->render('coaster/edit.html.twig', [
             'coasterForm' => $form,
         ]);
     }
