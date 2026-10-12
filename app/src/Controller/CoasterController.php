@@ -53,7 +53,7 @@ class CoasterController extends AbstractController
     public function edit(Coaster $entity, Request $request, EntityManagerInterface $em): Response
     {
         // On ne crée pas d'entité car elle est envoyée dans les paramètres
-        
+
         $form = $this->createForm(CoasterType::class, $entity);
         // Traitement des données $_POST 
         $form->handleRequest($request);
@@ -68,6 +68,21 @@ class CoasterController extends AbstractController
 
         return $this->render('coaster/edit.html.twig', [
             'coasterForm' => $form,
+        ]);
+    }
+
+    #[Route('/coaster/{id}/delete')]
+    public function delete(Coaster $coaster, EntityManagerInterface $em, Request $request): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$coaster->getId(), $request->request->get('_token'))) {
+            $em->remove($coaster);
+            $em->flush();
+
+            return $this->redirectToRoute('app_coaster_index');
+        }
+
+        return $this->render('/coaster/delete.html.twig', [
+            'coaster' => $coaster,
         ]);
     }
 }

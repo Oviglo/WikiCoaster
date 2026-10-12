@@ -27,6 +27,7 @@
                 <td>{{ coaster.operating ? 'OK':'KO' }}</td>
                 <td>
                     <a href="{{ path('app_coaster_edit', {id: coaster.id}) }}" class="btn">Modifier</a>
+                    <a href="{{ path('app_coaster_delete', {id: coaster.id}) }}" class="btn btn-error ms-1">Supprimer</a>
                 </td>
             </tr>
             {% endfor %}
