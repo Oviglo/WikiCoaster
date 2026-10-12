@@ -23,7 +23,9 @@
                 <td>{{  coaster.length }}</td>
                 <td>{{  coaster.maxHeight }}</td>
                 <td>{{  coaster.maxSpeed }}</td>
-                <td></td>
+                <td>
+                    <a href="{{ path('app_coaster_edit', { id: coaster.id }) }}" class="btn btn-sm">Modifier</a>
+                </td>
             </tr>
             {%  endfor %}
         </tbody>
