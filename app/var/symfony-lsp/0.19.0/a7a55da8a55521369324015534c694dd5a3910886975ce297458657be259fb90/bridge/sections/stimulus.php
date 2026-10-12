@@ -1,0 +1,236 @@
+<?php
+
+function symfonyLspBridgeStimulusSection(SymfonyLspBridgeContext $context): ?array
+{
+$controllers = [];
+$resources = [];
+$warnings = [];
+$complete = false;
+
+if (class_exists(Symfony\UX\StimulusBundle\StimulusBundle::class)) {
+try {
+$kernel = $context->kernel();
+$enabled = false;
+foreach ($kernel->getBundles() as $bundle) {
+if ($bundle instanceof Symfony\UX\StimulusBundle\StimulusBundle) {
+$enabled = true;
+break;
+}
+}
+if ($enabled) {
+$application = $context->application();
+$configuration = symfonyLspBridgeRunJsonCommand($application, [
+'command' => 'debug:config',
+'name' => 'stimulus',
+'--format' => 'json',
+...$context->commandOptions(),
+]);
+$configuration = is_array($configuration['stimulus'] ?? null) ? $configuration['stimulus'] : $configuration;
+$controllerPaths = array_values(array_filter(is_array($configuration['controller_paths'] ?? null) ? $configuration['controller_paths'] : [], 'is_string'));
+$controllersJson = is_string($configuration['controllers_json'] ?? null) ? $configuration['controllers_json'] : null;
+if (null !== $controllersJson && is_file($controllersJson)) {
+$resources[] = realpath($controllersJson) ?: $controllersJson;
+foreach (symfonyLspBridgeStimulusUxControllers($context->project(), $controllersJson, $warnings) as $name => $controller) {
+$controllers[$name] = $controller;
+}
+} elseif (null !== $controllersJson) {
+
+
+$warnings[] = 'The configured controllers.json was not found.';
+}
+foreach (symfonyLspBridgeStimulusBundleRegistries($context, $kernel, $warnings) as $bundleControllersJson) {
+$resources[] = realpath($bundleControllersJson) ?: $bundleControllersJson;
+foreach (symfonyLspBridgeStimulusUxControllers($context->project(), $bundleControllersJson, $warnings) as $name => $controller) {
+$controllers[$name] ??= $controller;
+}
+}
+foreach ($controllerPaths as $controllerPath) {
+foreach (symfonyLspBridgeStimulusLocalControllers($context->project(), $controllerPath) as $name => $controller) {
+$controllers[$name] = $controller;
+}
+}
+$complete = [] === $warnings;
+}
+} catch (Throwable) {
+$warnings[] = 'The Stimulus controllers are unavailable.';
+}
+}
+
+ksort($controllers);
+sort($resources);
+sort($warnings);
+$section = [
+'complete' => $complete,
+'controllers' => array_values($controllers),
+'resources' => $resources,
+'warnings' => $warnings,
+];
+return symfonyLspBridgeFinalizeSection($section);
+}
+
+function symfonyLspBridgeStimulusBundleRegistries(SymfonyLspBridgeContext $context, object $kernel, array &$warnings): array
+{
+$registries = [];
+try {
+if (!method_exists($kernel, 'getBundles')) {
+return [];
+}
+foreach ($kernel->getBundles() as $bundle) {
+if (!is_object($bundle) || !method_exists($bundle, 'getPath')) {
+continue;
+}
+foreach (['/Resources/assets/controllers.json', '/assets/controllers.json'] as $suffix) {
+$registry = rtrim((string) $bundle->getPath(), '/\\').$suffix;
+if (is_file($registry)) {
+$registries[] = $registry;
+}
+}
+}
+} catch (Throwable) {
+$warnings[] = 'The bundle Stimulus registries are unavailable.';
+}
+
+return $registries;
+}
+
+function symfonyLspBridgeStimulusLocalControllers(string $projectRoot, string $controllerPath): array
+{
+$controllers = [];
+$realPath = realpath($controllerPath);
+if (false === $realPath || !is_dir($realPath)) {
+return [];
+}
+$finder = (new Symfony\Component\Finder\Finder())
+->files()
+->in($realPath)
+->ignoreDotFiles(false)
+->ignoreVCS(false)
+->name('/[-_]controller\.[jt]s$/');
+foreach ($finder as $file) {
+$relative = Symfony\Component\Filesystem\Path::makeRelative($file->getPathname(), $realPath);
+if (!preg_match('/^.*[-_](controller\.[jt]s)$/', $relative, $match)) {
+continue;
+}
+if ('ts' === Symfony\Component\Filesystem\Path::getExtension($relative, true) && is_file(Symfony\Component\Filesystem\Path::changeExtension($file->getPathname(), 'js'))) {
+continue;
+}
+$name = str_replace(['_'.$match[1], '-'.$match[1]], '', $relative);
+$name = str_replace(['_', '/', '\\'], ['-', '--', '--'], $name);
+$sourcePath = $file->getRealPath();
+if (false === $sourcePath) {
+continue;
+}
+$controllers[$name] = symfonyLspBridgeStimulusController($projectRoot, $name, $sourcePath, null);
+}
+
+return $controllers;
+}
+
+function symfonyLspBridgeStimulusUxControllers(string $projectRoot, string $controllersJson, array &$warnings): array
+{
+try {
+$configuration = json_decode((string) file_get_contents($controllersJson), true, 512, JSON_THROW_ON_ERROR);
+} catch (Throwable) {
+$warnings[] = 'The Stimulus controllers.json configuration is unreadable.';
+
+return [];
+}
+$controllers = [];
+foreach (is_array($configuration['controllers'] ?? null) ? $configuration['controllers'] : [] as $packageName => $packageControllers) {
+if (!is_string($packageName) || !is_array($packageControllers)) {
+continue;
+}
+$composerPackage = ltrim($packageName, '@');
+$packagePath = Composer\InstalledVersions::isInstalled($composerPackage) ? Composer\InstalledVersions::getInstallPath($composerPackage) : null;
+if (!is_string($packagePath)) {
+$warnings[] = sprintf('Stimulus package not found: %s', $composerPackage);
+continue;
+}
+$packageJson = Symfony\Component\Filesystem\Path::join($packagePath, 'assets/package.json');
+if (!is_file($packageJson)) {
+$packageJson = Symfony\Component\Filesystem\Path::join($packagePath, 'Resources/assets/package.json');
+}
+if (!is_file($packageJson)) {
+$warnings[] = sprintf('Stimulus package metadata not found: %s', $composerPackage);
+continue;
+}
+try {
+$packageMetadata = json_decode((string) file_get_contents($packageJson), true, 512, JSON_THROW_ON_ERROR);
+} catch (Throwable) {
+$warnings[] = sprintf('The Stimulus package metadata for %s is unreadable.', $composerPackage);
+continue;
+}
+$packageDirectory = dirname($packageJson);
+$availableControllers = is_array($packageMetadata['symfony']['controllers'] ?? null) ? $packageMetadata['symfony']['controllers'] : [];
+foreach ($packageControllers as $controllerName => $localConfiguration) {
+if (!is_string($controllerName) || !is_array($localConfiguration) || true !== ($localConfiguration['enabled'] ?? false)) {
+continue;
+}
+$packageConfiguration = $availableControllers[$controllerName] ?? null;
+if (!is_array($packageConfiguration) || !is_string($packageConfiguration['main'] ?? null)) {
+$warnings[] = sprintf('Stimulus controller not found: %s/%s', $packageName, $controllerName);
+continue;
+}
+$name = substr($packageName.'/'.$controllerName, 1);
+$name = str_replace(['_', '/'], ['-', '--'], $name);
+if (is_string($packageConfiguration['name'] ?? null)) {
+$name = str_replace('/', '--', $packageConfiguration['name']);
+}
+if (is_string($localConfiguration['name'] ?? null)) {
+$name = str_replace('/', '--', $localConfiguration['name']);
+}
+$sourcePath = realpath(Symfony\Component\Filesystem\Path::join($packageDirectory, $packageConfiguration['main']));
+if (false === $sourcePath || !is_file($sourcePath)) {
+$warnings[] = sprintf('Stimulus controller source not found: %s/%s', $packageName, $controllerName);
+continue;
+}
+$lazy = 'lazy' === ($localConfiguration['fetch'] ?? 'eager');
+$controllers[$name] = symfonyLspBridgeStimulusController($projectRoot, $name, $sourcePath, $lazy);
+}
+}
+
+return $controllers;
+}
+
+function symfonyLspBridgeStimulusController(string $projectRoot, string $name, string $sourcePath, ?bool $lazy): array
+{
+$contents = file_get_contents($sourcePath);
+$contents = false === $contents ? '' : $contents;
+$metadata = symfonyLspBridgeStimulusJavascriptMetadata($contents);
+$root = Symfony\Component\Filesystem\Path::canonicalize(realpath($projectRoot) ?: $projectRoot);
+$sourcePath = Symfony\Component\Filesystem\Path::canonicalize($sourcePath);
+
+return [
+'name' => $name,
+'sourcePath' => $sourcePath,
+'lazy' => $lazy ?? 1 === preg_match('/\/\*!?\s*stimulusFetch:\s*[\'"]lazy[\'"]\s*\*\/|\/\/\s*stimulusFetch:\s*[\'"]lazy[\'"]/i', $contents),
+'vendor' => !Symfony\Component\Filesystem\Path::isBasePath($root, $sourcePath) || str_contains('/'.$sourcePath, '/vendor/'),
+...$metadata,
+];
+}
+
+function symfonyLspBridgeStimulusJavascriptMetadata(string $contents): array
+{
+preg_match_all('/^[ \t]*(?:async\s+)?([A-Za-z_$][A-Za-z0-9_$]*)\s*\([^)]*\)\s*(?::\s*[^\{\r\n]+)?\s*\{/m', $contents, $methodMatches);
+$actions = array_values(array_diff(array_unique($methodMatches[1]), ['connect', 'constructor', 'disconnect', 'initialize']));
+sort($actions);
+$metadata = ['actions' => $actions];
+foreach (['targets', 'outlets', 'classes'] as $property) {
+$values = [];
+if (preg_match('/\bstatic\s+'.preg_quote($property, '/').'\s*=\s*\[(.*?)\]/s', $contents, $match)) {
+preg_match_all('/([\'"])([^\'"]+)\1/', $match[1], $valueMatches);
+$values = array_values(array_unique($valueMatches[2]));
+sort($values);
+}
+$metadata[$property] = $values;
+}
+$values = [];
+if (preg_match('/\bstatic\s+values\s*=\s*\{(.*?)\}/s', $contents, $match)) {
+preg_match_all('/(?:^|,)\s*([A-Za-z_$][A-Za-z0-9_$]*)\s*:/m', $match[1], $valueMatches);
+$values = array_values(array_unique($valueMatches[1]));
+sort($values);
+}
+$metadata['values'] = $values;
+
+return $metadata;
+}
