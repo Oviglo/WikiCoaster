@@ -71,4 +71,23 @@ class CoasterController extends AbstractController
             'coasterForm' => $form,
         ]);
     }
+
+    #[Route('coaster/{id}/delete')]
+    public function delete(Coaster $coaster, EntityManagerInterface $em, Request $request): Response
+    {
+        if ($this->isCsrfTokenValid(
+            'delete'.$coaster->getId(),
+            $request->request->get('_token')
+        )) {
+            $em->remove($coaster);
+            $em->flush();
+
+            return $this->redirectToRoute('app_coaster_index');
+        }
+
+
+        return $this->render('coaster/delete.html.twig', [
+            'coaster' => $coaster,
+        ]);
+    }
 }

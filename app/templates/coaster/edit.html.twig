@@ -6,6 +6,7 @@
 {{ form_widget(coasterForm) }}
 {# Bouton HTML submit #}
 <button type="submit" class="btn btn-primary">Enregistrer</button>
+<a href="{{ path('app_coaster_index') }}" class="btn btn-neutral ms-2">Annuler</a>
 {{ form_end(coasterForm) }}
 
 {% endblock %}
