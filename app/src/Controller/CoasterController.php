@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Coaster;
 use App\Form\CoasterType;
 use App\Repository\CoasterRepository;
+use App\Service\DescriptionGeneratorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,7 +49,7 @@ class CoasterController extends AbstractController
         ]);
     }
 
-    #[Route('coaster/{id}/edit')]
+    #[Route('/coaster/{id}/edit')]
     // Param converter, permet de convertir un paramètre en entité
     public function edit(Coaster $entity, Request $request, EntityManagerInterface $em): Response
     {
@@ -84,5 +85,17 @@ class CoasterController extends AbstractController
         return $this->render('/coaster/delete.html.twig', [
             'coaster' => $coaster,
         ]);
+    }
+
+    #[Route('/coaster/{id}/generate-description')]
+    public function generateDescription(
+        Coaster $coaster,
+        EntityManagerInterface $em,
+        DescriptionGeneratorService $dgs,
+    ): Response {
+        $dgs->generateForCoaster($coaster);
+        $em->flush();
+
+        return $this->redirectToRoute('app_coaster_index');
     }
 }

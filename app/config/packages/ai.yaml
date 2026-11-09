@@ -1,0 +1,13 @@
+ai:
+    # see https://symfony.com/doc/current/ai/components/platform.html
+    platform:
+        openai:
+            api_key: '%env(OPENAI_API_KEY)%'
+
+    # see https://symfony.com/doc/current/ai/bundles/ai-bundle.html
+    agent:
+        default:
+            model: 'gpt-4o-mini'
+
+    # see https://symfony.com/doc/current/ai/components/store.html
+    store:
