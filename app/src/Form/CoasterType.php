@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Coaster;
+use App\Entity\Park;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -19,6 +21,13 @@ class CoasterType extends AbstractType
             ->add('length')
             ->add('maxHeight')
             ->add('operating')
+            ->add('park', EntityType::class, [
+                'class' => Park::class,
+            ])
+            ->add('description', options: [
+                'attr' => ['rows' => 15]
+            ])
+
         ;
     }
 

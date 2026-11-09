@@ -20,7 +20,11 @@
         "symfony/webpack-encore-bundle": "^2.4",
         "symfony/form": "8.1.*",
         "symfony/validator": "8.1.*",
-        "symfony/security-csrf": "8.1.*"
+        "symfony/security-csrf": "8.1.*",
+        "symfony/ai-bundle": "^0.15.0",
+        "symfony/ai-agent": "^0.15.0",
+        "symfony/ai-open-ai-platform": "^0.15.0",
+        "symfony/security-bundle": "8.1.*"
     },
     "config": {
         "allow-plugins": {

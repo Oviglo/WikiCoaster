@@ -26,6 +26,7 @@
                 <td>
                     <a href="{{ path('app_coaster_edit', { id: coaster.id }) }}" class="btn btn-sm">Modifier</a>
                     <a href="{{ path('app_coaster_delete', { id: coaster.id }) }}" class="btn btn-sm btn-error ms-1">Supprimer</a>
+                    <a href="{{ path('app_coaster_generatedescription', { id: coaster.id }) }}" class="btn btn-sm btn-accent ms-1">Générer la description</a>
                 </td>
             </tr>
             {%  endfor %}
