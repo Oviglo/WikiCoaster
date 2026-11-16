@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Coaster;
 use App\Form\CoasterType;
 use App\Repository\CoasterRepository;
+use App\Service\DescriptionGeneratorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,54 +14,57 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class CoasterController extends AbstractController
 {
-    #[Route('/coaster')]
-    // Injection de dépendance pour récupèrer le repository
+    #[Route('/coaster/add')]
+    public function add(EntityManagerInterface $em, Request $request): Response
+    {
+        // Création d'une entité
+        // $entity = new Coaster();
+        // $entity->setName('Blue Fire');
+
+        // $em->persist($entity); // Ajoute l'entité dans le manager
+        // $em->flush(); // Exécute les requêtes
+
+        $entity = new Coaster;
+        // CoasterType::class => 'App\Form\CoasterType'
+        $form = $this->createForm(CoasterType::class, $entity);
+        // Récupère les valeurs (POST) envoyées depuis le formulaire
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($entity);
+            $em->flush();
+
+            return $this->redirectToRoute('app_coaster_index');
+        }
+
+        return $this->render('coaster/add.html.twig', [
+            'coasterForm' => $form,
+        ]);
+    }
+
+    #[Route('coaster/')]
+    // Injection de dépendance
     public function index(CoasterRepository $coasterRepository): Response
     {
-        // $entityManager->getRepository(Coaster::class)->findAll()
-        $coasters = $coasterRepository->findAll(); // SELECT * FROM coaster
-
+        /** @var Coaster[] */
+        $coasters = $coasterRepository->findAll();
+        
         return $this->render('coaster/index.html.twig', [
             'coasters' => $coasters,
         ]);
     }
 
-    #[Route('/coaster/add')]
-    public function add(EntityManagerInterface $em, Request $request): Response
-    {
-        // Création d'une entité
-        $entity = new Coaster();
-        // $entity->setName('Blue Fire');
-        // CoasterType::class => 'App\Form\CoasterType'
-        $form = $this->createForm(CoasterType::class, $entity);
-        // Gestion des données envoyées par le formulaire (POST)
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($entity); // Ajoute l'entité dans le manager
-            $em->flush(); // Exécute les requêtes
-
-            // Redirection
-            return $this->redirectToRoute('app_coaster_index');
-        }
-
-        return $this->render('coaster/add.html.twig', [
-            'coasterForm' => $form, // $form->createView()
-        ]);
-    }
-
-    #[Route('/coaster/{id}/edit')]
+    #[Route('coaster/{id}/edit')]
     // Param converter
     public function edit(Coaster $entity, EntityManagerInterface $em, Request $request): Response
     {
         $form = $this->createForm(CoasterType::class, $entity);
-        // Gestion des données envoyées par le formulaire (POST)
+        // Récupère les valeurs (POST) envoyées depuis le formulaire
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush(); // Exécute les requêtes
+            $em->flush();
 
-            // Redirection
             return $this->redirectToRoute('app_coaster_index');
         }
 
@@ -69,7 +73,7 @@ class CoasterController extends AbstractController
         ]);
     }
 
-    #[Route('/coaster/{id}/delete')]
+    #[Route('coaster/{id}/delete')]
     public function delete(Coaster $coaster, EntityManagerInterface $em, Request $request): Response
     {
         if ($this->isCsrfTokenValid(
@@ -82,8 +86,22 @@ class CoasterController extends AbstractController
             return $this->redirectToRoute('app_coaster_index');
         }
 
+
         return $this->render('coaster/delete.html.twig', [
             'coaster' => $coaster,
         ]);
+    }
+
+    #[Route('/coaster/{id}/generate-description')]
+    public function generateDescription(
+        Coaster $coaster,
+        DescriptionGeneratorService $dgs,
+        EntityManagerInterface $em
+    ): Response
+    {
+        $dgs->generateForCoaster($coaster);
+        $em->flush();
+
+        return $this->redirectToRoute('app_coaster_index');
     }
 }

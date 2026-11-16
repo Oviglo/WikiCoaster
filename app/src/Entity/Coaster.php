@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\CoasterRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CoasterRepository::class)]
@@ -27,6 +28,12 @@ class Coaster
 
     #[ORM\Column]
     private ?bool $operating = true;
+
+    #[ORM\ManyToOne(inversedBy: 'coasters')]
+    private ?Park $park = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
 
     public function getId(): ?int
     {
@@ -89,6 +96,30 @@ class Coaster
     public function setOperating(bool $operating): static
     {
         $this->operating = $operating;
+
+        return $this;
+    }
+
+    public function getPark(): ?Park
+    {
+        return $this->park;
+    }
+
+    public function setPark(?Park $park): static
+    {
+        $this->park = $park;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }
