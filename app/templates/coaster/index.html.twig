@@ -12,6 +12,8 @@
                 <th>Long.</th>
                 <th>Haut. Max.</th>
                 <th>Vit. Max.</th>
+                <th>Parc</th>
+                <th>Catégories</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -23,6 +25,11 @@
                 <td>{{  coaster.length }}</td>
                 <td>{{  coaster.maxHeight }}</td>
                 <td>{{  coaster.maxSpeed }}</td>
+                <td>{{ coaster.park }}</td>
+                <td>{% for cat in coaster.categories %}
+                        <span class="badge me-1">{{ cat }}</span>
+                    {% endfor %}
+                </td>
                 <td>
                     <a href="{{ path('app_coaster_edit', { id: coaster.id }) }}" class="btn btn-sm">Modifier</a>
                     <a href="{{ path('app_coaster_delete', { id: coaster.id }) }}" class="btn btn-sm btn-error ms-1">Supprimer</a>

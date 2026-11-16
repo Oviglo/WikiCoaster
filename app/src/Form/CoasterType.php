@@ -2,8 +2,11 @@
 
 namespace App\Form;
 
+use App\Entity\Category;
 use App\Entity\Coaster;
 use App\Entity\Park;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,6 +29,18 @@ class CoasterType extends AbstractType
             ])
             ->add('description', options: [
                 'attr' => ['rows' => 15]
+            ])
+            ->add('categories', EntityType::class, [
+                'class' => Category::class,
+                'multiple' => true,
+                'required' => false,
+                'expanded' => true,
+                'query_builder' => function(EntityRepository $er): QueryBuilder {
+                    return $er->createQueryBuilder('cat')
+                        // ->where('cat.public = true)
+                        ->orderBy('cat.name', 'ASC')
+                    ;
+                }
             ])
 
         ;

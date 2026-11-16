@@ -23,6 +23,14 @@
         <main class="flex flex-nowrap h-[100vh]">
             <div class="flex flex-col shrink-0 shadow w-[240px] bg-base-200">
                 <div class="py-2 bg-primary text-center text-white">Wiki Coaster</div>
+                <ul class="menu">
+                    <li><a href="{{ path('app_coaster_index') }}">
+                        <span class="bi bi-minecart"></span> Coasters</a></li>
+                    <li><a href="{{ path('app_park_index') }}">
+                        <span class="bi bi-geo-fill"></span> Parcs</a></li>
+                    <li><a href="{{ path('app_category_index') }}">
+                        <span class="bi bi-tags"></span> Catégories</a></li>
+                </ul>
             </div>
             <div class="p-4 flex-grow-1">
                 <div class="bg-base-200 p-2 rounded-xs border-base-300">
