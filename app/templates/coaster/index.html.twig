@@ -5,6 +5,21 @@
     <a class="btn btn-neutral" href="{{ path('app_coaster_add') }}">Nouveau coaster</a>
 </div>
 <div>
+    <form method="GET">
+        <select class="select" name="park">
+            <option value="">Tout les parcs</option>
+            {% for p in parks %}
+            <option value="{{ p.id }}">{{ p.name }}</option>
+            {% endfor %}
+        </select>
+        <select class="select ms-1" name="category">
+            <option value="">Toutes les catégories</option>
+            {% for c in categories %}
+            <option value="{{ c.id }}">{{ c.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-neutral ms-1">Filtrer</button>
+    </form>
     <table class="table">
         <thead>
             <tr>
