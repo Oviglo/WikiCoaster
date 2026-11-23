@@ -98,4 +98,10 @@ class CoasterController extends AbstractController
 
         return $this->redirectToRoute('app_coaster_index');
     }
+
+    /*#[Route('coaster/{id}/show')]
+    public function show()
+    {
+
+    }*/
 }
