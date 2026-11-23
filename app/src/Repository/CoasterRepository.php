@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Coaster;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,28 +17,36 @@ class CoasterRepository extends ServiceEntityRepository
         parent::__construct($registry, Coaster::class);
     }
 
-    //    /**
-    //     * @return Coaster[] Returns an array of Coaster objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findFiltered(
+        string $parkId = '', 
+        string $categoryId = '',
+        int $page = 1,
+        int $count = 20,
+    ): Paginator
+    {
+        $begin = ($page - 1) * $count; // Calcul de l'offset
 
-    //    public function findOneBySomeField($value): ?Coaster
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $qb = $this->createQueryBuilder('c')
+            ->leftJoin('c.park', 'p')
+            ->leftJoin('c.categories', 'cat')
+            ->setMaxResults($count) // LIMIT
+            ->setFirstResult($begin) // OFFSET
+
+        ;
+
+        if ($parkId !== '') {
+            $qb->andWhere('p.id = :parkId')
+                ->setParameter('parkId', (int)$parkId)
+            ;
+        }
+        // Filtrer la catégorie
+        if ($categoryId !== '') {
+            $qb->andWhere('cat.id = :catId')
+                ->setParameter('catId', (int)$categoryId)
+            ;
+        }
+
+        return new Paginator($qb->getQuery());
+    }
+
 }

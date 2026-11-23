@@ -1,0 +1,9 @@
+{# templates/utils/_pagination.html.twig #}
+
+<nav aria-label="page">
+  <div class="join">
+    {% for p in 1..pageCount %} {# boucle de 1 à pageCount #}
+      <a class="join-item btn{% if app.request.query.get('p', 1) == p %} btn-active{% endif %}" href="{{ path(route, app.request.request.all('_route_params')|merge(app.request.query.all|merge({'p': p}))) }}">{{ p }}</a>
+    {% endfor %}
+  </div>
+</nav>

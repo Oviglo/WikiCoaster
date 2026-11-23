@@ -4,6 +4,24 @@
 <div class="flex justify-end my-4">
     <a class="btn btn-neutral" href="{{ path('app_coaster_add') }}">Nouveau coaster</a>
 </div>
+
+<form class="my-2 border border-base-200 p-2" method="GET">
+    <select name="park" class="select me-1">
+        <option value="">Tous les parcs</option>
+        {% for p in parks %}
+        <option value="{{ p.id }}" {{ app.request.query.get('park') == p.id ? 'selected':'' }}>{{ p }}</option>
+        {% endfor %}
+    </select>
+
+    <select name="category" class="select me-1">
+        <option value="">Toutes les catégories</option>
+        {% for c in categories %}
+        <option value="{{ c.id }}" {{ app.request.query.get("category") == c.id ? 'selected':'' }}>{{ c }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-neutral">Filtrer</button>
+</form>
+
 <div>
     <table class="table">
         <thead>
@@ -39,5 +57,7 @@
             {%  endfor %}
         </tbody>
     </table>
+
+    {% include "utils/_pagination.html.twig" with {'route' : 'app_coaster_index'} %}
 </div>
 {% endblock %}

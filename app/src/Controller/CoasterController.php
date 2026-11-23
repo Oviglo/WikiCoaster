@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Coaster;
 use App\Form\CoasterType;
+use App\Repository\CategoryRepository;
 use App\Repository\CoasterRepository;
+use App\Repository\ParkRepository;
 use App\Service\DescriptionGeneratorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -44,13 +46,33 @@ class CoasterController extends AbstractController
 
     #[Route('coaster/')]
     // Injection de dépendance
-    public function index(CoasterRepository $coasterRepository): Response
+    public function index(
+        CoasterRepository $coasterRepository,
+        ParkRepository $parkRepository,
+        CategoryRepository $categoryRepository,
+        Request $request,
+    ): Response
     {
-        /** @var Coaster[] */
-        $coasters = $coasterRepository->findAll();
+        $park = $request->query->get('park', '');
+        $category = $request->query->get('category', '');
+
+        $count = 10;
+        $page = $request->query->get('p', 1);
+
+        $coasters = $coasterRepository->findFiltered(
+            $park,
+            $category,
+            $page,
+            $count,
+        );
+
+        $pageCount = max(ceil($coasters->count() / $count), 1);
         
         return $this->render('coaster/index.html.twig', [
             'coasters' => $coasters,
+            'categories' => $categoryRepository->findAll(),
+            'parks' => $parkRepository->findAll(),
+            'pageCount' => $pageCount,
         ]);
     }
 
